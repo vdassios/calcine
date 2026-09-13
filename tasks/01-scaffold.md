@@ -37,5 +37,5 @@ Create: `package.json`, `package-lock.json`, `svelte.config.js`, `vite.config.ts
 
 - Do not add Tailwind, UnoCSS, PostCSS, or any CSS framework. Styles are hand-written per DESIGN.md.
 - Do not add a component library, icon package, or font package.
-- Do not add ESLint or Prettier configs.
+- Do not add ESLint or Prettier configs *as part of this task*. They were added separately after the scaffold landed (`eslint.config.js`, `.prettierrc`, `.prettierignore`, and the `lint`/`format` scripts); see MASTER.md §10. Task 01's acceptance criteria are unchanged by that.
 - Do not write any styles yet.

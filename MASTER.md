@@ -356,6 +356,8 @@ data/film-ids.json               data/cinema-ids.json
 data/identity-decisions.json     .build/{schedule.candidate,data-metrics}.json
 test/golden/showinfo.json        <- 599 values -> parsed output, hand-reviewed
 .github/workflows/{refresh-data,ci}.yml
+svelte.config.js                 vite.config.ts
+eslint.config.js                 .prettierrc  .prettierignore
 ```
 
 ---
@@ -377,6 +379,14 @@ Search comes **before** posters. Posters are a slow, external, fiddly dependency
 ---
 
 ## 10. Verification and CI
+
+**Node floor.** `.npmrc` sets `engine-strict=true`, so a dependency's `engines` is enforced at install time, not warned about. ESLint 10 requires `^20.19.0 || ^22.13.0 || >=24`, which is now declared in `package.json` `engines`. **CI must therefore use Node 22.13+ or 24** — a runner pinned to 22.12 fails `npm ci` outright rather than degrading.
+
+**Lint and format.** ESLint (flat config) with `typescript-eslint` and `eslint-plugin-svelte`; Prettier with `prettier-plugin-svelte`, **pinned to an exact version** so a patch release cannot reformat the tree and turn an unrelated PR into a thousand-line diff. `eslint-config-prettier` is applied last so ESLint never reports a formatting opinion. `npm run lint` checks both and runs in `ci.yml` alongside `check`, `test`, and `build`.
+
+Two deliberate exclusions: **MASTER.md, DESIGN.md and `tasks/`** are hand-formatted prose (Prettier would repad every table and reflow the aligned token columns in DESIGN.md's fences), and **generated artefacts** — `src/lib/data/schedule.json`, `static/posters/`, `test/golden/` — are never reformatted, since a whitespace-only change to the golden corpus would read as a source change (§4.6).
+
+Accessibility linting is **not** ESLint's job here: `eslint-plugin-svelte` v3 dropped its `a11y-*` rules in favour of the Svelte compiler's own warnings, which surface through `npm run check`. Task 08 depends on that command, not on the linter.
 
 **Vitest**, with two triggers:
 
